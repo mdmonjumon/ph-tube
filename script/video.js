@@ -50,12 +50,19 @@ const loadVideos = () => {
         .then(videos => displayVideos(videos.videos));
 }
 
-
-const loadCategoriesBaseVideo =  (id) => {
+// fetch category base videos from api
+const loadCategoriesBaseVideo = (id) => {
     fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
-    .then(res => res.json())
-    .then(data => displayVideos(data.category));
+        .then(res => res.json())
+        .then(data => displayVideos(data.category));
 }
+
+// fetch search content base videos from api
+document.getElementById('search-box').addEventListener('keyup', (e) => {
+    fetch(`https://openapi.programming-hero.com/api/phero-tube/videos?title=${e.target.value}`)
+        .then(res => res.json())
+        .then(data => displayVideos(data.videos))
+})
 
 
 // display categories button
@@ -73,10 +80,25 @@ const displayCategories = (data) => {
 // display all videos
 const displayVideos = (videos) => {
     const videosContainer = document.getElementById('videos-container');
-     videosContainer.innerHTML = "";
+    videosContainer.innerHTML = "";
+
+    if (videos.length === 0) {
+        const div = document.createElement('div');
+        div.innerHTML = `
+        <div class="flex flex-col gap-6 justify-center items-center h-80">
+        <img src="./assets/Icon.png">
+        <p class="text-2xl font-bold"> Oops!! sorry, There is no content here</p>
+        </div>
+        `;
+        videosContainer.classList.remove('grid');
+        videosContainer.append(div);
+    }
+
     videos.forEach(video => {
         const videoCard = document.createElement('div');
+        videosContainer.classList.add('grid');
         videoCard.innerHTML = `
+        
     <div>
         <figure class="h-60 relative">
             <img class="h-full w-full rounded-lg object-cover"
