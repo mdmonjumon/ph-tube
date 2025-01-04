@@ -1,3 +1,39 @@
+const secondToTime = (number) => {
+    const years = parseInt(number / 31536000);
+    number = number % 31536000;
+
+    const months = parseInt(number / 2592000);
+    number = number % 2592000;
+
+    const days = parseInt(number / 86400);
+    number = number % 86400;
+
+    const hours = parseInt(number / 3600);
+    number = number % 3600
+
+
+    const minute = parseInt(number / 60);
+
+
+    if (years === 0) {
+        if (months === 0) {
+            if (days === 0) {
+                if (hours === 0) {
+                    return `${minute} minutes ago`;
+                }
+                return `${hours} hours ${minute} minutes ago`;
+            }
+            return `${days} days ${hours} hours ${minute} minutes ago`;
+        }
+        return `${months} months ${days} days ${hours} hours ${minute} minutes ago`;
+    }
+    return `${years} years ${months} months ${days} days ${hours} hours ${minute} minutes ago`;
+};
+
+
+
+// category fetch from api
+
 const loadCategories = () => {
 
     fetch('https://openapi.programming-hero.com/api/phero-tube/categories')
@@ -6,7 +42,7 @@ const loadCategories = () => {
 
 }
 
-
+// video fetch from api
 const loadVideos = () => {
 
     fetch('https://openapi.programming-hero.com/api/phero-tube/videos')
@@ -15,20 +51,29 @@ const loadVideos = () => {
 }
 
 
+const loadCategoriesBaseVideo =  (id) => {
+    fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
+    .then(res => res.json())
+    .then(data => displayVideos(data.category));
+}
 
+
+// display categories button
 const displayCategories = (data) => {
     const buttonContainer = document.getElementById('button-container');
     data.forEach(item => {
         const buttonDiv = document.createElement('div');
         buttonDiv.innerHTML = `
-    <button class="btn lg:text-xl">${item.category} </button>
+    <button onclick="loadCategoriesBaseVideo(${item.category_id})" class="btn lg:text-xl">${item.category} </button>
     `;
         buttonContainer.append(buttonDiv)
     });
 };
 
+// display all videos
 const displayVideos = (videos) => {
     const videosContainer = document.getElementById('videos-container');
+     videosContainer.innerHTML = "";
     videos.forEach(video => {
         const videoCard = document.createElement('div');
         videoCard.innerHTML = `
@@ -38,7 +83,7 @@ const displayVideos = (videos) => {
             src="${video.thumbnail}"
             alt="" />
 
-            ${video?.others?.posted_date? `<span class="absolute right-2 bottom-4 bg-black text-white p-1 rounded-md">${video?.others?.posted_date}</span>` : ''}
+            ${video?.others?.posted_date ? `<span class="absolute right-2 bottom-4 bg-black text-white p-1 rounded-md text-xs">${secondToTime(video?.others?.posted_date)}</span>` : ''}
 
             
         </figure>
@@ -51,7 +96,7 @@ const displayVideos = (videos) => {
             </div>
             <div class="flex gap-2 items-center">
             <p>${video?.authors[0]?.profile_name}</p>
-            ${video?.authors[0]?.verified === true? '<img class="w-6" src="./assets/icons8-verified-48.png" alt="">' : ''}
+            ${video?.authors[0]?.verified === true ? '<img class="w-6" src="./assets/icons8-verified-48.png" alt="">' : ''}
             </div>
             <p>${video?.others?.views}</p>
             
@@ -66,14 +111,6 @@ const displayVideos = (videos) => {
         videosContainer.append(videoCard)
     });
 }
-
-
-
-
-
-
-
-
 
 
 
