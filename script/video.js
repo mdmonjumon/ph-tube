@@ -53,7 +53,16 @@ const loadVideos = () => {
 const loadCategoriesBaseVideo = (id) => {
     fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
         .then(res => res.json())
-        .then(data => displayVideos(data.category));
+        .then(data => {
+            displayVideos(data.category)
+            
+            // category button active class remove
+            removeClass()
+            // active button class add
+            const activeButton = document.getElementById(`btn-${id}`)
+            activeButton.classList.add('btn-secondary')
+            
+        });
 }
 
 // fetch search content base videos from api
@@ -71,17 +80,31 @@ const loadDetails = (details) => {
 }
 
 
+// remove class function
+const removeClass = ()=>{
+    const allButton = document.getElementsByClassName('category-btn')
+    for(const button of allButton){
+        button.classList.remove('btn-secondary');
+    }
+}
+
 // display categories button
 const displayCategories = (data) => {
     const buttonContainer = document.getElementById('button-container');
     data.forEach(item => {
+        
         const buttonDiv = document.createElement('div');
         buttonDiv.innerHTML = `
-    <button onclick="loadCategoriesBaseVideo(${item.category_id})" class="btn lg:text-xl">${item.category} </button>
+    <button id=btn-${item.category_id} onclick="loadCategoriesBaseVideo(${item.category_id})" class="btn lg:text-xl category-btn">${item.category} </button>
     `;
         buttonContainer.append(buttonDiv)
     });
 };
+
+const buttons = document.getElementsByClassName('category-btn');
+console.log(buttons)
+
+
 
 // display all videos
 const displayVideos = (videos) => {
@@ -139,9 +162,8 @@ const displayVideos = (videos) => {
 
 
 const viewDetails = (details) => {
-console.log(details)
-const modalContainer = document.getElementById('modal');
-modalContainer.innerHTML= `
+    const modalContainer = document.getElementById('modal');
+    modalContainer.innerHTML = `
 <!-- Open the modal using ID.showModal() method -->
 <dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
   <div class="modal-box space-y-2">
@@ -158,9 +180,11 @@ modalContainer.innerHTML= `
   </div>
 </dialog>
 `;
-my_modal_5.showModal()
-console.log(modalContainer)
+    my_modal_5.showModal()
 }
+
+
+
 
 
 
