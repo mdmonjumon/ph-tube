@@ -33,7 +33,6 @@ const secondToTime = (number) => {
 
 
 // category fetch from api
-
 const loadCategories = () => {
 
     fetch('https://openapi.programming-hero.com/api/phero-tube/categories')
@@ -63,6 +62,13 @@ document.getElementById('search-box').addEventListener('keyup', (e) => {
         .then(res => res.json())
         .then(data => displayVideos(data.videos))
 })
+
+// fetch video details
+const loadDetails = (details) => {
+    fetch(`https://openapi.programming-hero.com/api/phero-tube/video/${details}`)
+        .then(res => res.json())
+        .then(data => viewDetails(data.video))
+}
 
 
 // display categories button
@@ -104,10 +110,7 @@ const displayVideos = (videos) => {
             <img class="h-full w-full rounded-lg object-cover"
             src="${video.thumbnail}"
             alt="" />
-
             ${video?.others?.posted_date ? `<span class="absolute right-2 bottom-4 bg-black text-white p-1 rounded-md text-xs">${secondToTime(video?.others?.posted_date)}</span>` : ''}
-
-            
         </figure>
 
         <div class="flex gap-3 mt-3">
@@ -123,7 +126,7 @@ const displayVideos = (videos) => {
             <p>${video?.others?.views}</p>
             
             <div class="card-actions justify-center">
-                <button class="btn btn-info">Details</button>
+                <button onclick="loadDetails('${video.video_id}')" class="btn btn-info">Details</button>
             </div>
         </div>
         </div>
@@ -135,19 +138,29 @@ const displayVideos = (videos) => {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+const viewDetails = (details) => {
+console.log(details)
+const modalContainer = document.getElementById('modal');
+modalContainer.innerHTML= `
+<!-- Open the modal using ID.showModal() method -->
+<dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box space-y-2">
+    <img class="w-full" src="${details.thumbnail}">
+    <h3 class="text-xl font-bold">Title: ${details.title}</h3>
+    <p>Authors: ${details.authors[0].profile_name}</p>
+    <p>${details.description}</p>
+    <div class="modal-action">
+      <form method="dialog">
+        <!-- if there is a button in form, it will close the modal -->
+        <button class="btn">Close</button>
+      </form>
+    </div>
+  </div>
+</dialog>
+`;
+my_modal_5.showModal()
+console.log(modalContainer)
+}
 
 
 
